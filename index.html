@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARK: Cheating Evolved</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --sidebar-color: #161b22;
+      --hover-color: #21262d;
+      --active-border: #2f81f7;
+      --text-color: #c9d1d9;
+      --subtle-text: #8b949e;
+      --accent-color: #8a2be2;
+      --box-bg-color: #161b22;
+      --box-border-color: #30363d;
+      --box-padding: 1rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      overflow: hidden;
+      height: 100vh;
+      scroll-behavior: smooth;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    aside {
+      width: 280px;
+      background-color: var(--sidebar-color);
+      height: 100vh;
+      padding: 1rem;
+      border-right: 1px solid #30363d;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .right-sidebar {
+      width: 360px;
+      background-color: var(--sidebar-color);
+      height: 100vh;
+      padding: 1rem;
+      border-left: 1px solid #30363d;
+      overflow-y: auto;
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--subtle-text);
+      margin-bottom: 0.8rem;
+    }
+
+    .tab, .dropdown-tab {
+      display: flex;
+      align-items: center;
+      padding: 0.4rem 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: var(--text-color);
+      margin-bottom: 0.3rem;
+    }
+
+    .tab:hover, .dropdown-tab:hover {
+      background-color: var(--hover-color);
+    }
+
+    .tab.active {
+      border-left: 5px solid var(--active-border);
+      background-color: var(--hover-color);
+    }
+
+    .tab i, .dropdown-tab i {
+      width: 20px;
+      margin-right: 10px;
+    }
+
+    .tab-count {
+      margin-left: auto;
+      background: #30363d;
+      border-radius: 20px;
+      padding: 0 8px;
+      font-size: 0.75rem;
+      color: var(--subtle-text);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      max-width: calc(100% - 280px - 360px);
+    }
+
+    .divider {
+      height: 1px;
+      background-color: #30363d;
+      margin: 1rem 0;
+    }
+
+    .tab-box {
+      display: none;
+    }
+
+    .tab-box.active {
+      display: flex;
+      flex-direction: column; /* Align repo-boxes vertically */
+      gap: 1rem;
+    }
+
+    .repo-box {
+      background-color: var(--box-bg-color);
+      border: 1px solid var(--box-border-color);
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      flex: 0 1 100%; /* Single column layout */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .repo-box:hover {
+      background-color: var(--hover-color);
+    }
+
+    .repo-box p.title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .repo-box p.description {
+      font-size: 0.85rem;
+      color: var(--subtle-text);
+      margin-top: 0.5rem;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem;
+      background-color: var(--hover-color);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+
+    .theme-toggle i {
+      font-size: 1.1rem;
+    }
+
+    .results-count {
+      font-size: 1rem;
+      color: var(--subtle-text);
+      margin-bottom: 1rem;
+      padding-left: 0.25rem;
+    }
+
+    /* Search Bar Styles */
+    .search-bar {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      background-color: var(--box-bg-color);
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside>
+      <!-- Search Bar -->
+      <input type="text" id="searchInput" class="search-bar" placeholder="Search..." />
+
+      <!-- New Community Section -->
+      <div class="section">
+        <div class="section-title">Community</div>
+        <div class="tab" data-tab="faq"><i class="fas fa-question-circle"></i> FAQ</div>
+        <div class="tab" data-tab="discord"><i class="fab fa-discord"></i> Join Discord</div>
+        <div class="tab" data-tab="feedback"><i class="fas fa-comment-alt"></i> Feedback</div>
+      </div>
+      
+      <!-- Existing Explore Section -->
+      <div class="section">
+        <div class="section-title">Explore</div>
+        <div class="tab" data-tab="building"><i class="fas fa-building"></i> Building <span class="tab-count">12k</span></div>
+        <div class="tab" data-tab="helpful-info"><i class="fas fa-info-circle"></i> Helpful Info <span class="tab-count">8k</span></div>
+        <div class="tab" data-tab="settings"><i class="fas fa-cogs"></i> Settings <span class="tab-count">3k</span></div>
+        <div class="tab" data-tab="aim-train"><i class="fas fa-bullseye"></i> Aim Train <span class="tab-count">5k</span></div>
+        <div class="tab" data-tab="ini"><i class="fas fa-sliders-h"></i> Ini <span class="tab-count">4k</span></div>
+        <div class="tab" data-tab="meta"><i class="fas fa-puzzle-piece"></i> Meta <span class="tab-count">7k</span></div>
+        <div class="tab" data-tab="commands"><i class="fas fa-terminal"></i> Commands <span class="tab-count">10k</span></div>
+        <div class="tab" data-tab="farming"><i class="fas fa-leaf"></i> Farming <span class="tab-count">15k</span></div>
+        <div class="tab" data-tab="maps"><i class="fas fa-map"></i> Maps <span class="tab-count">30k</span></div>
+        <div class="tab" data-tab="meshing"><i class="fas fa-random"></i> Meshing <span class="tab-count">30k</span></div>
+        <div class="tab" data-tab="exploiting"><i class="fas fa-bug"></i> Exploiting <span class="tab-count">30k</span></div>
+        <div class="tab" data-tab="taming"><i class="fas fa-paw"></i> Taming <span class="tab-count">9k</span></div>
+      </div>
+
+      <div class="theme-toggle" id="themeToggle">
+        <span id="themeLabel">Dark Mode</span>
+        <i id="themeIcon" class="fas fa-moon"></i>
+      </div>
+    </aside>
+
+    <main>
+      <div id="buildingResults" class="results-count">Showing 8 results</div>
+      <div class="tab-box active" id="building">
+        <div class="repo-box" onclick="window.location.href='tower-design.html'"><p class="title">Tower Design</p><p class="description">Discover the best designs for towers in the game.</p></div>
+        <div class="repo-box" onclick="window.location.href='custom-paintings.html'"><p class="title">Custom Paintings</p><p class="description">Create your own custom paintings for the game environment.</p></div>
+        <div class="repo-box" onclick="window.location.href='floating-structures.html'"><p class="title">Floating Structures</p><p class="description">Learn how to build floating structures in the game.</p></div>
+        <div class="repo-box" onclick="window.location.href='ceiling-snapping.html'"><p class="title">Ceiling Snapping</p><p class="description">Guide to snapping ceilings accurately in construction.</p></div>
+        <div class="repo-box" onclick="window.location.href='turret-range-soak-time.html'"><p class="title">Turret Range & Soak Time</p><p class="description">Understand turret range and soak time mechanics.</p></div>
+        <div class="repo-box" onclick="window.location.href='war-room-building.html'"><p class="title">War Room Building</p><p class="description">Best practices for building war rooms in the game.</p></div>
+        <div class="repo-box" onclick="window.location.href='lowering-foundations.html'"><p class="title">Lowering Foundations</p><p class="description">A guide to lowering foundations for better structure stability.</p></div>
+        <div class="repo-box" onclick="window.location.href='raising-foundations.html'"><p class="title">Raising Foundations</p><p class="description">Learn how to raise foundations effectively for your builds.</p></div>
+      </div>
+    </main>
+
+    <aside class="right-sidebar">
+      <div class="section-title">Quick Links</div>
+      <div class="tab">Featured Builds</div>
+      <div class="tab">INI Presets</div>
+      <div class="tab">Tips & Tricks</div>
+      <div class="divider"></div>
+      <div class="section-title">Tools</div>
+      <div class="tab">Turret Calculator</div>
+      <div class="tab">Resource Tracker</div>
+    </aside>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const tabBoxes = document.querySelectorAll('.tab-box');
+    const resultsCount = document.querySelector('.results-count');
+    const repoBoxes = document.querySelectorAll('.repo-box');
+    const searchInput = document.getElementById('searchInput');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+        tabBoxes.forEach(box => box.classList.remove('active'));
+        tab.classList.add('active');
+        const activeBox = document.getElementById(targetId);
+        if (activeBox) {
+          activeBox.classList.add('active');
+          updateResultsCount(activeBox);  // Ensure results count is updated for active tab
+        }
+      });
+    });
+
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const themeIcon = document.getElementById('themeIcon');
+    let isDark = true;
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.documentElement.style.setProperty('--bg-color', isDark ? '#0d1117' : '#f0f0f0');
+      document.documentElement.style.setProperty('--sidebar-color', isDark ? '#161b22' : '#ffffff');
+      document.documentElement.style.setProperty('--hover-color', isDark ? '#21262d' : '#e0e0e0');
+      document.documentElement.style.setProperty('--text-color', isDark ? '#c9d1d9' : '#222');
+      document.documentElement.style.setProperty('--subtle-text', isDark ? '#8b949e' : '#555');
+      document.documentElement.style.setProperty('--box-bg-color', isDark ? '#161b22' : '#ffffff');
+      document.documentElement.style.setProperty('--box-border-color', isDark ? '#30363d' : '#ccc');
+      themeLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+      themeIcon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+    });
+
+    function updateResultsCount(activeBox) {
+      const visibleRepoBoxes = activeBox.querySelectorAll('.repo-box[style="display: block;"]');
+      resultsCount.textContent = `Showing ${visibleRepoBoxes.length} results`;
+    }
+
+    function filterRepoBoxes() {
+      const searchQuery = searchInput.value.toLowerCase();
+      const activeBox = document.querySelector('.tab-box.active');
+      const repoBoxes = activeBox.querySelectorAll('.repo-box');
+      
+      repoBoxes.forEach(repo => {
+        const title = repo.querySelector('.title').textContent.toLowerCase();
+        const description = repo.querySelector('.description').textContent.toLowerCase();
+        if (title.includes(searchQuery) || description.includes(searchQuery)) {
+          repo.style.display = 'block';
+        } else {
+          repo.style.display = 'none';
+        }
+      });
+
+      updateResultsCount(activeBox);  // Update count after filtering
+    }
+
+    searchInput.addEventListener('input', filterRepoBoxes);
+
+    // Initialize results count for the default active tab
+    updateResultsCount(document.querySelector('.tab-box.active'));
+  </script>
+</body>
+</html>
